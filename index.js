@@ -1,4 +1,4 @@
-const getHtml = require('./api/getHtml')
+const { getHtml,createOptions } = require('./api/getHtml')
 const fs = require('fs');
 const cheerio = require('cheerio');
 const getProxy  = require('./api/freeProxySpider')
@@ -16,8 +16,17 @@ let write = (data) => {
     })
 }
 
+let proxys = fs.readFileSync('./config/proxys.json','utf-8');
+proxys = proxys.split(',');
+
 let getIndexData = async (url,callback) => {
-    let data = await getHtml(url);
+    const MAX_LEN =  proxys.length -1;
+
+    let proxy = proxys[Math.random() * MAX_LEN];
+
+    let option = createOptions(url,proxy)
+
+    let data = await getHtml(option);
     let $ = cheerio.load(data);
     let area = [];
     $("dl.secitem_fist >dd > a[onClick^='clickLog']").map( (index,item) => {

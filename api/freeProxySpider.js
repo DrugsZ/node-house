@@ -52,6 +52,7 @@ async function getXici(i = 1) {
 function check() {
     //尝试请求百度的静态资源公共库中的jquery文件
     let url = "http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js";
+    let proxyArr = [];
 
     let flag = proxys.length;  //检查是否所有异步函数都执行完的标志量
     for(let i=0;i<proxys.length;i++) {
@@ -61,10 +62,12 @@ function check() {
         option.timeout = 20000;
 
         const res =getHtml(option).then( res => {
+            // proxyArr.push(option.proxy)
             saveProxys(option.proxy)
             useful++;
             flag--;
             if(flag == 0){
+                // saveProxys(proxyArr)
                 console.log(`当前共获取代理服务器${proxys.length}个;可用代理${useful}个`)
             }
             console.log(`IP:${i} => ${option.proxy}连接成功,已将该IP写入本地文件`)
@@ -82,9 +85,8 @@ function check() {
  */
 function saveProxys(proxy) {
     let config = path.resolve(__dirname, '../config')
-    fs.writeFileSync(config+'/proxys.txt', JSON.stringify(proxy)+',\r\n',{flag:'a'});
+    fs.writeFileSync(config+'/proxys.json', proxy+',',{flag:'a'});
 }
 
-// getXici();  //启动这个爬虫
 
 module.exports = getProxy
