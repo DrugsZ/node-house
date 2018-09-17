@@ -1,0 +1,27 @@
+{
+  "name": "node_house",
+  "version": "1.0.0",
+  "description": "request find house to show on map",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DrugsZ/node-house.git"
+  },
+  "keywords": [
+    "request",
+    "house"
+  ],
+  "author": "DrugsZ",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/DrugsZ/node-house/issues"
+  },
+  "homepage": "https://github.com/DrugsZ/node-house#readme",
+  "devDependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "request": "^2.88.0"
+  }
+}
