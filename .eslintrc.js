@@ -2,11 +2,12 @@ module.exports = {
   "env": {
       "browser": true,
       "commonjs": true,
+      "node": true,
       "es6": true
   },
   "extends": "eslint:recommended",
   "parserOptions": {
-      "ecmaVersion": 2015,
+      "ecmaVersion": 2017,
       "sourceType": "module"
   },
   "rules": {
