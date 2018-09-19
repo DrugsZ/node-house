@@ -3,7 +3,7 @@ exports.independentCityList = {
   '上海':'sh|2',
   '天津':'tj|18',
   '重庆':'cq|37'
-}
+};
 exports.cityList = {
   '安徽':{
     '合肥':'hf|837','芜湖':'wuhu|2045','蚌埠':'bengbu|3470','阜阳':'fy|2325','淮南':'hn|2319',
