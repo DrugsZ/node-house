@@ -1,6 +1,6 @@
 const { getUrlByName } = require('../util/getCity');
 const request = require('request');
-const cherrio = require('cheerio');
+const cheerio = require('cheerio');
 const fs = require('fs');
 
 const cityUrl = getUrlByName('青岛');
@@ -23,11 +23,37 @@ let saves = (name,data,callback) => {
 
 /**
  * 获取指定网页内容
- * 
+ *
  * @param {string} url - 要获取html的网址；
  */
-let getDetailList =  async(url) => {
-  request (`http:${cityUrl}pn${pageIndex}/`,(req,response,body) => {
-    
+let getDetailList =  (url) => {
+  request (`http:${cityUrl}pn${pageIndex}/`,(error,response,body) => {
+    saves(__dirname+'/body.html',body,(error)=>{
+      console.log(error);
+    });
+    // let $ = cherrio.load(body);
+    // let ul = $('.listUl');
+    // let liList = ui
   });
 };
+
+fs.readFile(__dirname + '/body.html',(err,data) => {
+  if (err){
+    console.log(err);
+  }
+
+  let body = data.toString();
+  let $ = cheerio.load(body);
+  let aTags = $('a.strongbox');
+
+  aTags.map((index,aTag) => {
+    let url = 'http://' + $(aTag).attr('href');
+    tranUrls.push(url);
+  });
+
+  saves(__dirname+'/urls.json',JSON.stringify(tranUrls),(error)=>{
+    console.log(error);
+  });
+});
+
+exports.getDetailList = getDetailList;
