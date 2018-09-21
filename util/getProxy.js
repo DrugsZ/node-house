@@ -9,8 +9,15 @@ const fs = require('fs');
  * @returns {Object} error | response && body 成功时返回请求体,失败则返回错误原因
  */
 let getProxyHtml = async (index) => {
+  let options = {
+    url:`http://www.xicidaili.com/nn/${index}`,
+    methods:'GET',
+    headers:{
+      'User-agent':'Mozilla/5.0 (Windows; U; Windows NT 5.2) AppleWebKit/525.13 (KHTML, like Gecko) Chrome/0.2.149.27 Safari/525.13 '
+    }
+  };
   return new Promise((resolve,reject) => {
-    request(`http://www.xicidaili.com/nn/${index}`,(error,response,body) => {
+    request(options,(error,response,body) => {
       if (error) {
         reject(error);
         return;
@@ -36,8 +43,11 @@ let parseHtmltoXici = async (body) => {
     if (!tds.length) return;
     proxy['ip'] = $(tds[1]).text();
     proxy['port'] =  $(tds[2]).text();
-    proxy = JSON.stringify(proxy);
-    if (proxy.ip && proxy.port) proxys.push(proxy);
+
+    if (proxy.ip && proxy.port) {
+      proxy = JSON.stringify(proxy);
+      proxys.push(proxy);
+    }
   });
   proxys = proxys.join(',\n');
   // let path = path.resolve(__dirname, '../config')
