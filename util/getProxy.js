@@ -34,24 +34,74 @@ let getProxyHtml = async (index) => {
 let parseHtmltoXici = async (body) => {
   let $ = cheerio.load(body);
   let trs = $('#ip_list tr');
-  let proxys = [];
+  let proxyProimises = [];
 
-  trs.map( (index,tr) => {
+  trs.map((index,tr) => {
     let proxy = Object.create(null);
     let td = $(tr);
     let tds = td.children('td');
     if (!tds.length) return;
-    proxy['ip'] = $(tds[1]).text();
+    proxy['ip'] = $(tds[1]).text(); 
     proxy['port'] =  $(tds[2]).text();
 
     if (proxy.ip && proxy.port) {
-      proxy = JSON.stringify(proxy);
-      proxys.push(proxy);
+      proxyProimises.push(
+        testProxy(`${proxy.ip}:${proxy.port}`)
+        //   .then(({status}) => {
+        //     if (status) {
+        //       proxys.push(proxy);
+        //     }
+        //   }).catch(error => {
+        //     console.log(error);
+        //   })
+      );
     }
   });
-  proxys = proxys.join(',\n');
-  // let path = path.resolve(__dirname, '../config')
-  fs.writeFileSync(__dirname+'/proxys.json',proxys + ',\n',{flag:'a'});
+  Promise.all(proxyProimises)
+    .then((res)=>{
+      let result = res.filter( proxy => proxy.status);
+      let proxys = result.map(item=>item.proxyUrl);
+      fs.writeFileSync(__dirname+'./../config/proxys.json',JSON.stringify(proxys,null,2));
+    }).catch(error => {
+      console.log(error);
+    });
+};
+
+/**
+ * 
+ * @param {string} proxyUrl - 将要测试的转发地址
+ * @returns {Promise} 返回代理是否可用
+ */
+let testProxy = (proxyUrl) => {
+  return new Promise((resolve,reject) => {
+    request('http://libs.baidu.com/jquery/1.9.0/jquery.js',{
+      proxy:`http://${proxyUrl}`,
+      timeout:8000
+    },(error,response) => {
+      if (error) {
+        resolve({
+          detail:error,
+          status:false,
+          proxyUrl
+        });
+        return;
+      }
+
+      if (response.statusCode && response.statusCode == 200) {
+        resolve({
+          status:true,
+          proxyUrl
+        });
+        return;
+      }
+            
+      resolve({
+        detail:response,
+        status:false,
+        proxyUrl
+      });
+    });
+  });
 };
 
 /**
