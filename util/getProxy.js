@@ -31,11 +31,11 @@ let getProxyHtml = async (index) => {
  *
  * @param {object} body html源代码
  */
-let parseHtmltoXici = async (body) => {
+let parseHtmltoXici = (body) => {
   let $ = cheerio.load(body);
   let trs = $('#ip_list tr');
-  let proxyProimises = [];
-
+  let proxys = [];
+  
   trs.map((index,tr) => {
     let proxy = Object.create(null);
     let td = $(tr);
@@ -44,20 +44,13 @@ let parseHtmltoXici = async (body) => {
     proxy['ip'] = $(tds[1]).text();
     proxy['port'] =  $(tds[2]).text();
 
-    if (proxy.ip && proxy.port) {
-      proxyProimises.push(
-        testProxy(`${proxy.ip}:${proxy.port}`)
-      );
-    }
+    proxys.push(proxy);
+
+    
   });
-  Promise.all(proxyProimises)
-    .then((res)=>{
-      let result = res.filter( proxy => proxy.status);
-      let proxys = result.map(item=>item.proxyUrl);
-      fs.writeFileSync(__dirname+'./../config/proxys.json',JSON.stringify(proxys,null,2));
-    }).catch(error => {
-      console.log(error);
-    });
+
+  return proxys;
+  
 };
 
 /**
@@ -104,6 +97,11 @@ let testProxy = (proxyUrl) => {
 let getProxy = async (i) => {
   // console.log(`正在抓取第${i}页内容`);
   let {body} = await getProxyHtml(i);
-  parseHtmltoXici(body);
+  const proxys = parseHtmltoXici(body);
+  return proxys;
 };
-exports.getProxy = getProxy;
+// exports.getProxy = getProxy;
+module.exports = {
+  testProxy,
+  getProxy
+};
