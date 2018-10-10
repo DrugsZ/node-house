@@ -38,7 +38,7 @@ let getDetailList =  (url) => {
 };
 
 fs.readFile(__dirname + '/body.html',(err,data) => {
-  if (err){
+  if (err) {
     console.log(err);
   }
 
