@@ -41,19 +41,12 @@ let parseHtmltoXici = async (body) => {
     let td = $(tr);
     let tds = td.children('td');
     if (!tds.length) return;
-    proxy['ip'] = $(tds[1]).text(); 
+    proxy['ip'] = $(tds[1]).text();
     proxy['port'] =  $(tds[2]).text();
 
     if (proxy.ip && proxy.port) {
       proxyProimises.push(
         testProxy(`${proxy.ip}:${proxy.port}`)
-        //   .then(({status}) => {
-        //     if (status) {
-        //       proxys.push(proxy);
-        //     }
-        //   }).catch(error => {
-        //     console.log(error);
-        //   })
       );
     }
   });
@@ -68,7 +61,7 @@ let parseHtmltoXici = async (body) => {
 };
 
 /**
- * 
+ *
  * @param {string} proxyUrl - 将要测试的转发地址
  * @returns {Promise} 返回代理是否可用
  */
@@ -94,7 +87,7 @@ let testProxy = (proxyUrl) => {
         });
         return;
       }
-            
+
       resolve({
         detail:response,
         status:false,
