@@ -20,7 +20,7 @@ module.exports = {
           "unix"
       ],
       "keyword-spacing": [
-        "error", 
+        "error",
         {"before": true, "after": true}
       ],
       "quotes": [
@@ -30,6 +30,7 @@ module.exports = {
       "semi": [
           "error",
           "always"
-      ]
+      ],
+      "no-console": 0
   }
 };
