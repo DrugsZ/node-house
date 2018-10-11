@@ -1,13 +1,13 @@
 // const {getDetailList} = require('./src/houseInfoList');
-const {getProxy,testProxy} = require('./util/getProxy');
+const {getProxy, testProxy} = require('./util/getProxy');
 const fs = require('fs');
 const { getHouseDetail } = require('./src/getHouseDetail');
 
 const PROXY_INDEX = 50;
-let proxyProimises = [];
+const proxyProimises = [];
 
 
-fs.readFile('./config/proxys.json',async (error,data) => {
+fs.readFile('./config/proxys.json', async (error, data) => {
   if (error) {
     for (let i = 1;i<PROXY_INDEX; i++ ) {
     // console.log(i);
@@ -20,13 +20,13 @@ fs.readFile('./config/proxys.json',async (error,data) => {
           );
         }
       });
-      
+
     }
     Promise.all(proxyProimises)
-      .then((res)=>{
-        let result = res.filter( proxy => proxy.status);
-        let proxys = result.map(item=>item.proxyUrl);
-        fs.writeFileSync(__dirname +'/config/proxys.json',JSON.stringify(proxys,null,2));
+      .then((res) => {
+        const result = res.filter( proxy => proxy.status);
+        const proxys = result.map(item => item.proxyUrl);
+        fs.writeFileSync(__dirname +'/config/proxys.json', JSON.stringify(proxys, null, 2));
       }).catch(error => {
         console.log(error);
       });
