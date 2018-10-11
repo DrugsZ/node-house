@@ -3,25 +3,26 @@ const {getProxy, testProxy} = require('./util/getProxy');
 const fs = require('fs');
 const { getHouseDetail } = require('./src/getHouseDetail');
 
-const PROXY_INDEX = 50;
+const PROXY_INDEX = 15;
 const proxyProimises = [];
 
 
 fs.readFile('./config/proxys.json', async (error, data) => {
   if (error) {
+    let allProxys = [];
     for (let i = 1;i<PROXY_INDEX; i++ ) {
     // console.log(i);
       const proxys = await getProxy(i);
 
-      proxys.forEach(proxy => {
-        if (proxy.ip && proxy.port) {
-          proxyProimises.push(
-            testProxy(`${proxy.ip}:${proxy.port}`)
-          );
-        }
-      });
-
+      allProxys = allProxys.concat(proxys);
     }
+    allProxys.forEach(proxy => {
+      if (proxy.ip && proxy.port) {
+        proxyProimises.push(
+          testProxy(`${proxy.ip}:${proxy.port}`)
+        );
+      }
+    });
     Promise.all(proxyProimises)
       .then((res) => {
         const result = res.filter( proxy => proxy.status);
