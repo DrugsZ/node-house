@@ -43,6 +43,7 @@ module.exports = {
       "arrow-spacing": ["error", { "before": true, "after": true }],
       "comma-spacing": ["error", { "before": false, "after": true }],
       "prefer-const":"error",
-      "no-mixed-spaces-and-tabs": "error"
+      "no-mixed-spaces-and-tabs": "error",
+      "no-dupe-keys": "error"
   }
 };
