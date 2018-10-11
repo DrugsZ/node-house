@@ -6,12 +6,16 @@ const { getHouseDetail } = require('./src/getHouseDetail');
 const PROXY_INDEX = 15;
 const proxyProimises = [];
 
+let hasProxyConfig = false;
 
-fs.readFile('./config/proxys.json', async (error, data) => {
-  if (error) {
+try {
+  fs.accessSync('./config/proxys.json');
+  hasProxyConfig = true;
+} catch (error) {
+  (async () => {
     let allProxys = [];
     for (let i = 1;i<PROXY_INDEX; i++ ) {
-    // console.log(i);
+      // console.log(i);
       const proxys = await getProxy(i);
 
       allProxys = allProxys.concat(proxys);
@@ -31,8 +35,12 @@ fs.readFile('./config/proxys.json', async (error, data) => {
       }).catch(error => {
         console.log(error);
       });
+  })();
+}
+
+fs.readFile('./config/proxys.json', async (error, data) => {
+  if (error) {
+    console.log(error);
   }
-//   let proxyStr = `[${data.toString()}]`;
-//   let proxys = JSON.parse(proxyStr);
-//   return proxys;
+  // const proxys  = JSON.parse(data.toString());
 });
