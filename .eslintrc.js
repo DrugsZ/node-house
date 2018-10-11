@@ -38,6 +38,11 @@ module.exports = {
           "keywords": "always",
           "classes": "never"
         }
-      ]
+      ],
+      "space-before-function-paren": ["error", "always"],
+      "arrow-spacing": ["error", { "before": true, "after": true }],
+      "comma-spacing": ["error", { "before": false, "after": true }],
+      "prefer-const":"error",
+      "no-mixed-spaces-and-tabs": "error"
   }
 };
