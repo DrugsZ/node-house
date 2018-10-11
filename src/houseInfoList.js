@@ -15,9 +15,9 @@ const tranUrls = [];
   * @param {*} data-将要写入的数据;
   * @param {function} callback-错误处理回调;
   */
-let saves = (name,data,callback) => {
-  fs.writeFile(name,data,(err) => {
-    callback.call(null,err);
+const saves = (name, data, callback) => {
+  fs.writeFile(name, data, (err) => {
+    callback.call(null, err);
   });
 };
 
@@ -26,9 +26,9 @@ let saves = (name,data,callback) => {
  *
  * @param {string} url - 要获取html的网址；
  */
-let getDetailList =  (url) => {
-  request (`http:${cityUrl}pn${pageIndex}/`,(error,response,body) => {
-    saves(__dirname+'/body.html',body,(error)=>{
+const getDetailList =  (url) => {
+  request (`http:${cityUrl}pn${pageIndex}/`, (error, response, body) => {
+    saves(__dirname+'/body.html', body, (error) => {
       console.log(error);
     });
     // let $ = cherrio.load(body);
@@ -37,21 +37,21 @@ let getDetailList =  (url) => {
   });
 };
 
-fs.readFile(__dirname + '/body.html',(err,data) => {
+fs.readFile(__dirname + '/body.html', (err, data) => {
   if (err) {
     console.log(err);
   }
 
-  let body = data.toString();
-  let $ = cheerio.load(body);
-  let aTags = $('a.strongbox');
+  const body = data.toString();
+  const $ = cheerio.load(body);
+  const aTags = $('a.strongbox');
 
-  aTags.map((index,aTag) => {
-    let url = 'http://' + $(aTag).attr('href');
+  aTags.map((index, aTag) => {
+    const url = 'http://' + $(aTag).attr('href');
     tranUrls.push(url);
   });
 
-  saves(__dirname+'/urls.json',JSON.stringify(tranUrls),(error)=>{
+  saves(__dirname+'/urls.json', JSON.stringify(tranUrls), (error) => {
     console.log(error);
   });
 });
