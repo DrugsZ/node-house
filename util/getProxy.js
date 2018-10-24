@@ -62,7 +62,7 @@ const testProxy = (proxyUrl) => {
   return new Promise((resolve, reject) => {
     request('http://libs.baidu.com/jquery/1.9.0/jquery.js', {
       proxy:`http://${proxyUrl}`,
-      timeout:8000
+      timeout:15000
     }, (error, response) => {
       if (error) {
         resolve({
