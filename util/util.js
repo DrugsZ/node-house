@@ -20,3 +20,5 @@ const creatListNode = (arr) => {
 
   return head;
 };
+
+exports.creatListNode = creatListNode;
