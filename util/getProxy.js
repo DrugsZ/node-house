@@ -1,6 +1,7 @@
 const request = require('request');
 const cheerio = require('cheerio');
 const fs = require('fs');
+const { creatListNode } = require('./util');
 
 /**
  * 获取西刺代理页面
@@ -100,8 +101,61 @@ const getProxy = async (i) => {
   const proxys = parseHtmltoXici(body);
   return proxys;
 };
-// exports.getProxy = getProxy;
+
+
+const proxyList = () => {
+
+  let hasProxyConfig = false;
+
+  const PROXY_INDEX = 15;
+  const proxyProimises = [];
+
+  try {
+    fs.accessSync('./config/proxys.json');
+    hasProxyConfig = true;
+  } catch (error) {
+    (async () => {
+      let allProxys = [];
+      for (let i = 1;i<PROXY_INDEX; i++ ) {
+      // console.log(i);
+        const proxys = await getProxy(i);
+
+        allProxys = allProxys.concat(proxys);
+      }
+      allProxys.forEach(proxy => {
+        if (proxy.ip && proxy.port) {
+          proxyProimises.push(
+            testProxy(`${proxy.ip}:${proxy.port}`)
+          );
+        }
+      });
+      Promise.all(proxyProimises)
+        .then((res) => {
+          const result = res.filter( proxy => proxy.status);
+          const proxys = result.map(item => item.proxyUrl);
+          fs.writeFileSync(__dirname +'/config/proxys.json', JSON.stringify(proxys, null, 2));
+        }).catch(error => {
+          console.log(error);
+        });
+    })();
+  }
+
+  let proxys;
+
+  fs.readFile('./config/proxys.json', async (error, data) => {
+    if (error) {
+      console.log(error);
+    }
+    const tempProxys = JSON.parse(data);
+    proxys  = creatListNode(tempProxys);
+  });
+
+  return proxys;
+};
+
+
+
+
 module.exports = {
-  testProxy,
-  getProxy
+  proxyList
 };
