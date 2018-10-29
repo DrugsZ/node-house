@@ -8,18 +8,7 @@ const pageIndex = 1;
 
 
 const tranUrls = [];
-
-/**
-  * fs写入二次封装
-  * @param {string} name-目标文件名;
-  * @param {*} data-将要写入的数据;
-  * @param {function} callback-错误处理回调;
-  */
-const saves = (name, data, callback) => {
-  fs.writeFile(name, data, (err) => {
-    callback.call(null, err);
-  });
-};
+let pending = false;
 
 /**
  * 获取指定网页内容
@@ -28,34 +17,72 @@ const saves = (name, data, callback) => {
  */
 const getDetailList =  (url) => {
   request (`http:${cityUrl}pn${pageIndex}/`, (error, response, body) => {
-    saves(__dirname+'/body.html', body, (error) => {
+    // saves(__dirname+'/body.html', body, (error) => {
+    //   console.log(error);
+    // });
+
+    if (error) {
       console.log(error);
+    }
+
+    const $ = cheerio.load(body);
+    const aTags = $('a.strongbox');
+
+    aTags.map((index, aTag) => {
+      const url = 'http:' + $(aTag).attr('href');
+      tranUrls.push(url);
     });
-    // let $ = cherrio.load(body);
-    // let ul = $('.listUl');
-    // let liList = ui
+
+    if (!pending) {
+      pending = true;
+      url2detail();
+    }
   });
 };
 
-fs.readFile(__dirname + '/body.html', (err, data) => {
-  if (err) {
-    console.log(err);
+// fs.readFile(__dirname + '/urls.json', 'utf-8', (error, data) => {
+//   if (error) {
+//     console.log(error);
+//   }
+
+//   tranUrls = JSON.parse(data);
+
+//   if (!pending) {
+//     url2detail();
+//   }
+// });
+
+
+const url2detail = () => {
+
+  pending = false;
+  const urls = tranUrls.slice(1, 3);
+
+  tranUrls.length = 0;
+  let url;
+  for (url of urls) {
+    const p = new Promise((resolve, reject) => {
+      request (url, (error, response, body) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(body);
+      });
+    });
+    p.then(body => {
+      const houseInfo = parseHouseDetail(body);
+      fs.writeFile('./info.json', JSON.stringify(houseInfo), {flag:'a'}, (error) => {
+        if (error) {
+          console.log(error);
+        }
+      });
+    }).catch(error => {
+      console.log(error);
+    });
+
   }
 
-  const body = data.toString();
-  const $ = cheerio.load(body);
-  const aTags = $('a.strongbox');
-
-  aTags.map((index, aTag) => {
-    const url = 'http://' + $(aTag).attr('href');
-    tranUrls.push(url);
-  });
-
-  saves(__dirname+'/urls.json', JSON.stringify(tranUrls), (error) => {
-    console.log(error);
-  });
-});
-
+};
 const parseHouseDetail = (body) => {
   const $ = cheerio.load(body);
   const rent = $('b.f36.strongbox').text();
